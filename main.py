@@ -1,15 +1,21 @@
+import os
 import boto3
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 from gcn_kafka import Consumer
 import logging
 import email
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 
 # TODO: update the sender for test and prod 
 SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
 AWS_REGION = "us-east-1"
 CHARSET = "UTF-8"
-SUBJECT = "GCN Alert for Topic: {}"
+SUBJECT = "GCN/{}"
+# Used for testing attachment sends, works for local files
+ATTACHMENT=""
 
 logger = logging.getLogger(__name__)
 
@@ -56,12 +62,60 @@ def recieve_alerts():
             for message in consumer.consume():
                 table = boto3.resource('dynamodb',region_name=AWS_REGION).Table('table name here')
                 recipients = query_and_project_subscribers(table, message.topic())
-
-                for recipient in recipients:
-                    send_ses_message_to_recipient(message, recipient)
+                if recipients:
+                    for recipient in recipients:
+                        send_raw_ses_message_to_recipient(message, recipient)
+                        #send_ses_message_to_recipient(message, recipient)
     
     except KeyboardInterrupt:
         print('Interrupted')
+
+def send_raw_ses_message_to_recipient(message, recipient):
+    BODY_TEXT = str(email.message_from_bytes(message.value()))
+
+    # Create a new SES resource and specify a region.
+    client = boto3.client('ses',region_name=AWS_REGION)
+
+    # multipart/mixed parent container
+    msg = MIMEMultipart('mixed')
+    print(msg.get_content_type())
+    msg['Subject'] = SUBJECT.format(message.topic().split('.')[3])
+    msg['From'] = SENDER
+    msg['To'] = recipient
+    
+    msg_body = MIMEMultipart('alternative')
+    text_part = MIMEText(BODY_TEXT.encode(CHARSET), 'plain', CHARSET)
+    print(text_part)
+    msg_body.attach(text_part)
+
+    msg.attach(msg_body)
+    # Define attachment part:
+    if ATTACHMENT:
+    # Define the attachment part and encode it using MIMEApplication.
+        att = MIMEApplication(open(ATTACHMENT, 'rb').read())
+
+        # Add a header to tell the email client to treat this part as an attachment,
+        # and to give the attachment a name.
+        att.add_header('Content-Disposition','attachment',filename=os.path.basename(ATTACHMENT))
+        msg.attach(att)
+
+    # Try to send the email.
+    try:
+        #Provide the contents of the email.
+        response = client.send_raw_email(
+           Source=SENDER,
+           Destinations=[recipient],
+           RawMessage={
+            'Data':msg.as_string()
+           }
+        )
+
+    # Display an error if something goes wrong.	
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+    else:
+        print("Email sent! Message ID:"),
+        print(response['MessageId'])
 
 def send_ses_message_to_recipient(message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
@@ -94,11 +148,12 @@ def send_ses_message_to_recipient(message, recipient):
                 },
                 'Subject': {
                     'Charset': CHARSET,
-                    'Data': SUBJECT.format(message.topic()),
+                    'Data': SUBJECT.format(message.topic().split('.')[3]),
                 },
             },
             Source=SENDER
         )
+
     # Display an error if something goes wrong.	
     except ClientError as e:
         print(e.response['Error']['Message'])
