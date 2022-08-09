@@ -3,16 +3,13 @@ from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
 from gcn_kafka import Consumer
 import logging
+import email
 
+# TODO: update the sender for test and prod 
 SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
 AWS_REGION = "us-east-1"
 CHARSET = "UTF-8"
 SUBJECT = "GCN Alert for Topic: {}"
-
-# Specify a configuration set. If you do not want to use a configuration
-# set, comment the following variable, and the 
-# ConfigurationSetName=CONFIGURATION_SET argument below.
-#CONFIGURATION_SET = "ConfigSet"
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +32,7 @@ def query_and_project_subscribers(table, topic):
                 err.response['Error']['Code'], err.response['Error']['Message'])
         else:
             logger.error(
-                "Couldn't query for movies. Here's why: %s: %s",
+                "Couldn't query for recipients. Here's why: %s: %s",
                 err.response['Error']['Code'], err.response['Error']['Message'])
             raise
     else:
@@ -43,18 +40,23 @@ def query_and_project_subscribers(table, topic):
 
 def connect_as_consumer():
     global consumer 
-    consumer = Consumer(client_id="fill-me-in", 
-                        client_secret="fill-me-in")
+    # TODO: dedicated credentials for service?
+    consumer = Consumer(client_id='fill-me-in',
+                        client_secret='fill-me-in')
 
 def subscribe_to_topics():
-    consumer.subscribe(consumer.topics())
+    # list_topics also contains some non-topic values, filtering is necessary
+    # This may need to be updated if new topics have a format different than 'gcn.classic.[text | voevent | binary].[topic]'
+    topics = list(topic for topic in consumer.list_topics().topics if 'gcn' in topic)
+    consumer.subscribe(topics)
 
 def recieve_alerts():
     try:
         while True:
             for message in consumer.consume():
-                table = boto3.resource('dynamodb',region_name=AWS_REGION).Table('email_notification_subscription')
-                recipients = query_and_project_subscribers(table, 'gcn.classic.')
+                table = boto3.resource('dynamodb',region_name=AWS_REGION).Table('table name here')
+                recipients = query_and_project_subscribers(table, message.topic())
+
                 for recipient in recipients:
                     send_ses_message_to_recipient(message, recipient)
     
@@ -62,9 +64,11 @@ def recieve_alerts():
         print('Interrupted')
 
 def send_ses_message_to_recipient(message, recipient):
-    BODY_TEXT = message.value()
-    # Might not need this, copied from aws demo
-    BODY_HTML = message.value()
+    BODY_TEXT = str(email.message_from_bytes(message.value()))
+    # Might not need this
+    BODY_HTML = str(email.message_from_bytes(message.value()))
+
+    # TODO: Include unsub link?
 
     # Create a new SES resource and specify a region.
     client = boto3.client('ses',region_name=AWS_REGION)
@@ -93,9 +97,7 @@ def send_ses_message_to_recipient(message, recipient):
                     'Data': SUBJECT.format(message.topic()),
                 },
             },
-            Source=SENDER,
-            # Are we using this?
-            #ConfigurationSetName=CONFIGURATION_SET,
+            Source=SENDER
         )
     # Display an error if something goes wrong.	
     except ClientError as e:
@@ -110,6 +112,4 @@ def main():
     recieve_alerts()
 
 if (__name__ == "__main__"):
-    # main() commented out to test the following:
-    table = boto3.resource('dynamodb',region_name=AWS_REGION).Table('email_notification_subscription')
-    print(query_and_project_subscribers(table, 'gcn.classic.'))
+    main()
