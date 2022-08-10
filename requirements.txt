@@ -1,2 +1,4 @@
 gcn-kafka==0.1.2
 boto3==1.24.45
+ratelimit==2.2.1
+backoff==2.1.2

@@ -8,14 +8,22 @@ import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+from ratelimit import limits, RateLimitException
+from backoff import on_exception, expo
 
 # TODO: update the sender for test and prod 
 SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
 AWS_REGION = "us-east-1"
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
-# Used for testing attachment sends, works for local files
+# Used for testing attachment sends, works for a local file
+# Can probably be used to draw from a bucket, also still need to try 
+# for multiple files
 ATTACHMENT=""
+
+# Maximum send rate = 14 emails / Second
+MAX_SENDS = 14
+SENDING_PERIOD = 1 # Seconds
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +78,10 @@ def recieve_alerts():
     except KeyboardInterrupt:
         print('Interrupted')
 
+# Alternatively, we can import sleep_and_retry from ratelimit
+# This will cause the thread to sleep until the time limit has ellapsed and then retry the call
+@on_exception(expo, RateLimitException)
+@limits(calls=MAX_SENDS, period=SENDING_PERIOD)
 def send_raw_ses_message_to_recipient(message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
 
@@ -117,12 +129,14 @@ def send_raw_ses_message_to_recipient(message, recipient):
         print("Email sent! Message ID:"),
         print(response['MessageId'])
 
+@on_exception(expo, RateLimitException)
+@limits(calls=MAX_SENDS, period=SENDING_PERIOD)
 def send_ses_message_to_recipient(message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
     # Might not need this
     BODY_HTML = str(email.message_from_bytes(message.value()))
 
-    # TODO: Include unsub link?
+    # TODO: Include unsub link or link to notification management in gcn?
 
     # Create a new SES resource and specify a region.
     client = boto3.client('ses',region_name=AWS_REGION)
