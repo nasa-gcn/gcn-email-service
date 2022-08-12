@@ -1,0 +1,31 @@
+[tool.poetry]
+name = "gcn-email-service"
+version = "0.1.0"
+description = "Kafka to email notification service"
+license = "NASA-1.3"
+authors = ["Dakota Dutko <dakota.c.dutko@nasa.gov>", "Leo Singer <leo.singer@ligo.org>"]
+
+[tool.poetry.dependencies]
+backoff = "*"
+boto3 = "*"
+gcn-kafka = "*"
+python = "^3.9"
+ratelimit = "*"
+
+[tool.poetry.dev-dependencies]
+flake8 = "*"
+
+[tool.poetry.scripts]
+gcn-email-service = "gcn_email_service:main"
+
+[tool.coverage.run]
+source = [
+    "gcn_email_service"
+]
+omit = [
+    "*/test/*"
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

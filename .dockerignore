@@ -1,0 +1,7 @@
+.coverage
+.git
+.vscode
+__pycache__
+build
+dist
+Dockerfile
