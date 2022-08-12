@@ -43,14 +43,6 @@ jobs:
       # - name: Upload coverage to codecov
       #   uses: codecov/codecov-action@v3
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-        with:
-          platforms: amd64,arm64
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
@@ -62,7 +54,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          load: true
           tags: ${{ github.repository }}:test
 
       # - name: Test Docker image
@@ -81,7 +73,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
