@@ -1,23 +1,31 @@
-import os
-import boto3
-from botocore.exceptions import ClientError
-from boto3.dynamodb.conditions import Key
-from gcn_kafka import Consumer
-import logging
+#
+# Copyright © 2022 United States Government as represented by the Administrator
+# of the National Aeronautics and Space Administration. No copyright is claimed
+# in the United States under Title 17, U.S. Code. All Other Rights Reserved.
+#
+# SPDX-License-Identifier: NASA-1.3
+#
 import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+import logging
+import os
+
+import boto3
+from botocore.exceptions import ClientError
+from boto3.dynamodb.conditions import Key
+from gcn_kafka import Consumer
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
 
-# TODO: update the sender for test and prod 
+# TODO: update the sender for test and prod
 SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
 AWS_REGION = "us-east-1"
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
-# Can probably be used to draw from a bucket, also still need to try 
+# Can probably be used to draw from a bucket, also still need to try
 # for multiple files
 ATTACHMENT=""
 
@@ -26,6 +34,7 @@ MAX_SENDS = 14
 SENDING_PERIOD = 1 # Seconds
 
 logger = logging.getLogger(__name__)
+
 
 def query_and_project_subscribers(table, topic):
     """
@@ -52,11 +61,13 @@ def query_and_project_subscribers(table, topic):
     else:
         return [x['recipient'] for x in response['Items']]
 
+
 def connect_as_consumer():
-    global consumer 
+    global consumer
     # TODO: dedicated credentials for service?
     consumer = Consumer(client_id='fill-me-in',
                         client_secret='fill-me-in')
+
 
 def subscribe_to_topics():
     # list_topics also contains some non-topic values, filtering is necessary
@@ -64,19 +75,21 @@ def subscribe_to_topics():
     topics = list(topic for topic in consumer.list_topics().topics if 'gcn' in topic)
     consumer.subscribe(topics)
 
+
 def recieve_alerts():
     try:
         while True:
             for message in consumer.consume():
-                table = boto3.resource('dynamodb',region_name=AWS_REGION).Table('table name here')
+                table = boto3.resource('dynamodb', region_name=AWS_REGION).Table('table name here')
                 recipients = query_and_project_subscribers(table, message.topic())
                 if recipients:
                     for recipient in recipients:
                         send_raw_ses_message_to_recipient(message, recipient)
                         #send_ses_message_to_recipient(message, recipient)
-    
+
     except KeyboardInterrupt:
         print('Interrupted')
+
 
 # Alternatively, we can import sleep_and_retry from ratelimit
 # This will cause the thread to sleep until the time limit has ellapsed and then retry the call
@@ -86,7 +99,7 @@ def send_raw_ses_message_to_recipient(message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
 
     # Create a new SES resource and specify a region.
-    client = boto3.client('ses',region_name=AWS_REGION)
+    client = boto3.client('ses', region_name=AWS_REGION)
 
     # multipart/mixed parent container
     msg = MIMEMultipart('mixed')
@@ -94,7 +107,7 @@ def send_raw_ses_message_to_recipient(message, recipient):
     msg['Subject'] = SUBJECT.format(message.topic().split('.')[3])
     msg['From'] = SENDER
     msg['To'] = recipient
-    
+
     msg_body = MIMEMultipart('alternative')
     text_part = MIMEText(BODY_TEXT.encode(CHARSET), 'plain', CHARSET)
     print(text_part)
@@ -108,7 +121,7 @@ def send_raw_ses_message_to_recipient(message, recipient):
 
         # Add a header to tell the email client to treat this part as an attachment,
         # and to give the attachment a name.
-        att.add_header('Content-Disposition','attachment',filename=os.path.basename(ATTACHMENT))
+        att.add_header('Content-Disposition', 'attachment', filename=os.path.basename(ATTACHMENT))
         msg.attach(att)
 
     # Try to send the email.
@@ -122,12 +135,13 @@ def send_raw_ses_message_to_recipient(message, recipient):
            }
         )
 
-    # Display an error if something goes wrong.	
+    # Display an error if something goes wrong.
     except ClientError as e:
         print(e.response['Error']['Message'])
     else:
         print("Email sent! Message ID:"),
         print(response['MessageId'])
+
 
 @on_exception(expo, RateLimitException)
 @limits(calls=MAX_SENDS, period=SENDING_PERIOD)
@@ -139,7 +153,7 @@ def send_ses_message_to_recipient(message, recipient):
     # TODO: Include unsub link or link to notification management in gcn?
 
     # Create a new SES resource and specify a region.
-    client = boto3.client('ses',region_name=AWS_REGION)
+    client = boto3.client('ses', region_name=AWS_REGION)
     # Try to send the email.
     try:
         #Provide the contents of the email.
@@ -168,17 +182,15 @@ def send_ses_message_to_recipient(message, recipient):
             Source=SENDER
         )
 
-    # Display an error if something goes wrong.	
+    # Display an error if something goes wrong.
     except ClientError as e:
         print(e.response['Error']['Message'])
     else:
         print("Email sent! Message ID:"),
         print(response['MessageId'])
 
+
 def main():
     connect_as_consumer()
     subscribe_to_topics()
     recieve_alerts()
-
-if (__name__ == "__main__"):
-    main()
