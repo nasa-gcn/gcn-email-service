@@ -27,11 +27,11 @@ SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
 # Can probably be used to draw from a bucket, also still need to try
 # for multiple files
-ATTACHMENT=""
+ATTACHMENT = ""
 
 # Maximum send rate = 14 emails / Second
 MAX_SENDS = 14
-SENDING_PERIOD = 1 # Seconds
+SENDING_PERIOD = 1  # Seconds
 
 logger = logging.getLogger(__name__)
 
@@ -52,11 +52,13 @@ def query_and_project_subscribers(table, topic):
         if err.response['Error']['Code'] == "ValidationException":
             logger.warning(
                 "There's a validation error. Here's the message: %s: %s",
-                err.response['Error']['Code'], err.response['Error']['Message'])
+                err.response['Error']['Code'],
+                err.response['Error']['Message'])
         else:
             logger.error(
                 "Couldn't query for recipients. Here's why: %s: %s",
-                err.response['Error']['Code'], err.response['Error']['Message'])
+                err.response['Error']['Code'],
+                err.response['Error']['Message'])
             raise
     else:
         return [x['recipient'] for x in response['Items']]
@@ -71,8 +73,10 @@ def connect_as_consumer():
 
 def subscribe_to_topics():
     # list_topics also contains some non-topic values, filtering is necessary
-    # This may need to be updated if new topics have a format different than 'gcn.classic.[text | voevent | binary].[topic]'
-    topics = list(topic for topic in consumer.list_topics().topics if 'gcn' in topic)
+    # This may need to be updated if new topics have a format different than
+    # 'gcn.classic.[text | voevent | binary].[topic]'
+    topics = [
+        topic for topic in consumer.list_topics().topics if 'gcn' in topic]
     consumer.subscribe(topics)
 
 
@@ -80,19 +84,26 @@ def recieve_alerts():
     try:
         while True:
             for message in consumer.consume():
-                table = boto3.resource('dynamodb', region_name=AWS_REGION).Table('table name here')
-                recipients = query_and_project_subscribers(table, message.topic())
+                table = boto3.resource(
+                    'dynamodb', region_name=AWS_REGION
+                ).Table(
+                    'table name here'
+                )
+                recipients = query_and_project_subscribers(
+                    table, message.topic()
+                )
                 if recipients:
                     for recipient in recipients:
                         send_raw_ses_message_to_recipient(message, recipient)
-                        #send_ses_message_to_recipient(message, recipient)
+                        # send_ses_message_to_recipient(message, recipient)
 
     except KeyboardInterrupt:
         print('Interrupted')
 
 
 # Alternatively, we can import sleep_and_retry from ratelimit
-# This will cause the thread to sleep until the time limit has ellapsed and then retry the call
+# This will cause the thread to sleep until the time limit has ellapsed and
+# then retry the call
 @on_exception(expo, RateLimitException)
 @limits(calls=MAX_SENDS, period=SENDING_PERIOD)
 def send_raw_ses_message_to_recipient(message, recipient):
@@ -116,22 +127,24 @@ def send_raw_ses_message_to_recipient(message, recipient):
     msg.attach(msg_body)
     # Define attachment part:
     if ATTACHMENT:
-    # Define the attachment part and encode it using MIMEApplication.
+        # Define the attachment part and encode it using MIMEApplication.
         att = MIMEApplication(open(ATTACHMENT, 'rb').read())
 
-        # Add a header to tell the email client to treat this part as an attachment,
-        # and to give the attachment a name.
-        att.add_header('Content-Disposition', 'attachment', filename=os.path.basename(ATTACHMENT))
+        # Add a header to tell the email client to treat this part as an
+        # attachment, and to give the attachment a name.
+        att.add_header(
+            'Content-Disposition', 'attachment',
+            filename=os.path.basename(ATTACHMENT))
         msg.attach(att)
 
     # Try to send the email.
     try:
-        #Provide the contents of the email.
+        # Provide the contents of the email.
         response = client.send_raw_email(
            Source=SENDER,
            Destinations=[recipient],
            RawMessage={
-            'Data':msg.as_string()
+            'Data': msg.as_string()
            }
         )
 
@@ -156,7 +169,7 @@ def send_ses_message_to_recipient(message, recipient):
     client = boto3.client('ses', region_name=AWS_REGION)
     # Try to send the email.
     try:
-        #Provide the contents of the email.
+        # Provide the contents of the email.
         response = client.send_email(
             Destination={
                 'ToAddresses': [
