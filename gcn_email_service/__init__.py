@@ -19,6 +19,12 @@ from gcn_kafka import Consumer
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
 
+from core import get_client_secrets
+
+client_secrets = get_client_secrets()
+CLIENT_ID = client_secrets["ClientId"]
+CLIENT_SECRET = client_secrets["ClientSecret"]
+
 # TODO: update the sender for test and prod
 SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
 AWS_REGION = "us-east-1"
