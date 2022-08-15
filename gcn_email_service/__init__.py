@@ -9,6 +9,7 @@ import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+import json
 import logging
 import os
 
@@ -21,7 +22,7 @@ from backoff import on_exception, expo
 
 from core import get_client_secrets
 
-client_secrets = get_client_secrets()
+client_secrets = json.loads(get_client_secrets())
 CLIENT_ID = client_secrets["ClientId"]
 CLIENT_SECRET = client_secrets["ClientSecret"]
 
