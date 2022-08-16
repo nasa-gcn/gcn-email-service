@@ -205,5 +205,3 @@ def main():
     connect_as_consumer()
     subscribe_to_topics()
     recieve_alerts()
-
-main()
