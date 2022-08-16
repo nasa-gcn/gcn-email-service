@@ -80,10 +80,9 @@ def recieve_alerts(consumer):
             recipients = query_and_project_subscribers(
                 table, message.topic()
             )
-            if recipients:
-                for recipient in recipients:
-                    send_raw_ses_message_to_recipient(ses, message, recipient)
-                    # send_ses_message_to_recipient(ses, message, recipient)
+            for recipient in recipients:
+                send_raw_ses_message_to_recipient(ses, message, recipient)
+                # send_ses_message_to_recipient(ses, message, recipient)
 
 
 # Alternatively, we can import sleep_and_retry from ratelimit
