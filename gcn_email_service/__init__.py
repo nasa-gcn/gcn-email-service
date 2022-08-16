@@ -70,13 +70,13 @@ def subscribe_to_topics():
 
 
 def recieve_alerts():
+    table = boto3.resource(
+        'dynamodb'
+    ).Table(
+        'table name here'
+    )
     while True:
         for message in consumer.consume():
-            table = boto3.resource(
-                'dynamodb'
-            ).Table(
-                'table name here'
-            )
             recipients = query_and_project_subscribers(
                 table, message.topic()
             )
