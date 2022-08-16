@@ -30,7 +30,6 @@ ATTACHMENT = ""
 
 # Maximum send rate = 14 emails / Second
 MAX_SENDS = 14
-SENDING_PERIOD = 1  # Seconds
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +88,7 @@ def recieve_alerts(consumer):
 # This will cause the thread to sleep until the time limit has ellapsed and
 # then retry the call
 @on_exception(expo, RateLimitException)
-@limits(calls=MAX_SENDS, period=SENDING_PERIOD)
+@limits(calls=MAX_SENDS, period=1)
 def send_raw_ses_message_to_recipient(client, message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
 
@@ -133,7 +132,7 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
 
 
 @on_exception(expo, RateLimitException)
-@limits(calls=MAX_SENDS, period=SENDING_PERIOD)
+@limits(calls=MAX_SENDS, period=1)
 def send_ses_message_to_recipient(client, message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
     # Might not need this
