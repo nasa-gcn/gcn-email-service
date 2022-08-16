@@ -79,24 +79,20 @@ def subscribe_to_topics():
 
 
 def recieve_alerts():
-    try:
-        while True:
-            for message in consumer.consume():
-                table = boto3.resource(
-                    'dynamodb', region_name=AWS_REGION
-                ).Table(
-                    'table name here'
-                )
-                recipients = query_and_project_subscribers(
-                    table, message.topic()
-                )
-                if recipients:
-                    for recipient in recipients:
-                        send_raw_ses_message_to_recipient(message, recipient)
-                        # send_ses_message_to_recipient(message, recipient)
-
-    except KeyboardInterrupt:
-        print('Interrupted')
+    while True:
+        for message in consumer.consume():
+            table = boto3.resource(
+                'dynamodb', region_name=AWS_REGION
+            ).Table(
+                'table name here'
+            )
+            recipients = query_and_project_subscribers(
+                table, message.topic()
+            )
+            if recipients:
+                for recipient in recipients:
+                    send_raw_ses_message_to_recipient(message, recipient)
+                    # send_ses_message_to_recipient(message, recipient)
 
 
 # Alternatively, we can import sleep_and_retry from ratelimit
