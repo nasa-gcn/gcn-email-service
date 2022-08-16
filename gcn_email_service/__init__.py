@@ -9,22 +9,15 @@ import email
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-import json
 import logging
 import os
 
 import boto3
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
-from gcn_kafka import Consumer
+from gcn_kafka import Consumer, config_from_env
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
-
-from core import get_client_secrets
-
-client_secrets = json.loads(get_client_secrets())
-CLIENT_ID = client_secrets["ClientId"]
-CLIENT_SECRET = client_secrets["ClientSecret"]
 
 # TODO: update the sender for test and prod
 SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
@@ -73,9 +66,7 @@ def query_and_project_subscribers(table, topic):
 
 def connect_as_consumer():
     global consumer
-    # TODO: dedicated credentials for service?
-    consumer = Consumer(client_id='fill-me-in',
-                        client_secret='fill-me-in')
+    consumer = Consumer(config=config_from_env(os.environ))
 
 
 def subscribe_to_topics():
@@ -214,3 +205,5 @@ def main():
     connect_as_consumer()
     subscribe_to_topics()
     recieve_alerts()
+
+main()
