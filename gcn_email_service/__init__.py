@@ -55,11 +55,10 @@ def query_and_project_subscribers(table, topic):
 
 
 def connect_as_consumer():
-    global consumer
-    consumer = Consumer(config_from_env())
+    return Consumer(config_from_env())
 
 
-def subscribe_to_topics():
+def subscribe_to_topics(consumer):
     # list_topics also contains some non-topic values, filtering is necessary
     # This may need to be updated if new topics have a format different than
     # 'gcn.classic.[text | voevent | binary].[topic]'
@@ -69,7 +68,7 @@ def subscribe_to_topics():
     consumer.subscribe(topics)
 
 
-def recieve_alerts():
+def recieve_alerts(consumer):
     table = boto3.resource(
         'dynamodb'
     ).Table(
@@ -177,6 +176,6 @@ def send_ses_message_to_recipient(client, message, recipient):
 
 
 def main():
-    connect_as_consumer()
-    subscribe_to_topics()
-    recieve_alerts()
+    consumer = connect_as_consumer()
+    subscribe_to_topics(consumer)
+    recieve_alerts(consumer)
