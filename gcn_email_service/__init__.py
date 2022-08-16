@@ -66,7 +66,7 @@ def query_and_project_subscribers(table, topic):
 
 def connect_as_consumer():
     global consumer
-    consumer = Consumer(config=config_from_env(os.environ))
+    consumer = Consumer(config_from_env())
 
 
 def subscribe_to_topics():
