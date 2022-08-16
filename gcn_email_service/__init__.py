@@ -21,7 +21,6 @@ from backoff import on_exception, expo
 
 # TODO: update the sender for test and prod
 SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
-AWS_REGION = "us-east-1"
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
@@ -73,7 +72,7 @@ def recieve_alerts():
     while True:
         for message in consumer.consume():
             table = boto3.resource(
-                'dynamodb', region_name=AWS_REGION
+                'dynamodb'
             ).Table(
                 'table name here'
             )
@@ -94,8 +93,7 @@ def recieve_alerts():
 def send_raw_ses_message_to_recipient(message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
 
-    # Create a new SES resource and specify a region.
-    client = boto3.client('ses', region_name=AWS_REGION)
+    client = boto3.client('ses')
 
     # multipart/mixed parent container
     msg = MIMEMultipart('mixed')
@@ -145,8 +143,7 @@ def send_ses_message_to_recipient(message, recipient):
 
     # TODO: Include unsub link or link to notification management in gcn?
 
-    # Create a new SES resource and specify a region.
-    client = boto3.client('ses', region_name=AWS_REGION)
+    client = boto3.client('ses')
     # Try to send the email.
     try:
         # Provide the contents of the email.
