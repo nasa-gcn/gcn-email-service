@@ -75,6 +75,7 @@ def recieve_alerts():
     ).Table(
         'table name here'
     )
+    ses = boto3.client('ses')
     while True:
         for message in consumer.consume():
             recipients = query_and_project_subscribers(
@@ -82,8 +83,8 @@ def recieve_alerts():
             )
             if recipients:
                 for recipient in recipients:
-                    send_raw_ses_message_to_recipient(message, recipient)
-                    # send_ses_message_to_recipient(message, recipient)
+                    send_raw_ses_message_to_recipient(ses, message, recipient)
+                    # send_ses_message_to_recipient(ses, message, recipient)
 
 
 # Alternatively, we can import sleep_and_retry from ratelimit
@@ -91,10 +92,8 @@ def recieve_alerts():
 # then retry the call
 @on_exception(expo, RateLimitException)
 @limits(calls=MAX_SENDS, period=SENDING_PERIOD)
-def send_raw_ses_message_to_recipient(message, recipient):
+def send_raw_ses_message_to_recipient(client, message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
-
-    client = boto3.client('ses')
 
     # multipart/mixed parent container
     msg = MIMEMultipart('mixed')
@@ -137,14 +136,13 @@ def send_raw_ses_message_to_recipient(message, recipient):
 
 @on_exception(expo, RateLimitException)
 @limits(calls=MAX_SENDS, period=SENDING_PERIOD)
-def send_ses_message_to_recipient(message, recipient):
+def send_ses_message_to_recipient(client, message, recipient):
     BODY_TEXT = str(email.message_from_bytes(message.value()))
     # Might not need this
     BODY_HTML = str(email.message_from_bytes(message.value()))
 
     # TODO: Include unsub link or link to notification management in gcn?
 
-    client = boto3.client('ses')
     # Try to send the email.
     try:
         # Provide the contents of the email.
