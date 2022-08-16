@@ -15,7 +15,7 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
-from gcn_kafka import Consumer
+from gcn_kafka import Consumer, config_from_env
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
 
@@ -66,9 +66,7 @@ def query_and_project_subscribers(table, topic):
 
 def connect_as_consumer():
     global consumer
-    # TODO: dedicated credentials for service?
-    consumer = Consumer(client_id='fill-me-in',
-                        client_secret='fill-me-in')
+    consumer = Consumer(config_from_env())
 
 
 def subscribe_to_topics():
