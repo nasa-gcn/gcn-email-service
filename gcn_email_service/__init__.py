@@ -48,18 +48,9 @@ def query_and_project_subscribers(table, topic):
             ProjectionExpression="#topic, recipient",
             ExpressionAttributeNames={"#topic": "topic"},
             KeyConditionExpression=(Key('topic').eq(topic)))
-    except ClientError as err:
-        if err.response['Error']['Code'] == "ValidationException":
-            logger.warning(
-                "There's a validation error. Here's the message: %s: %s",
-                err.response['Error']['Code'],
-                err.response['Error']['Message'])
-        else:
-            logger.error(
-                "Couldn't query for recipients. Here's why: %s: %s",
-                err.response['Error']['Code'],
-                err.response['Error']['Message'])
-            raise
+    except ClientError:
+        logger.exception('Failed to query recipients')
+        return []
     else:
         return [x['recipient'] for x in response['Items']]
 
@@ -108,14 +99,12 @@ def send_raw_ses_message_to_recipient(message, recipient):
 
     # multipart/mixed parent container
     msg = MIMEMultipart('mixed')
-    print(msg.get_content_type())
     msg['Subject'] = SUBJECT.format(message.topic().split('.')[3])
     msg['From'] = SENDER
     msg['To'] = recipient
 
     msg_body = MIMEMultipart('alternative')
     text_part = MIMEText(BODY_TEXT.encode(CHARSET), 'plain', CHARSET)
-    print(text_part)
     msg_body.attach(text_part)
 
     msg.attach(msg_body)
@@ -134,7 +123,7 @@ def send_raw_ses_message_to_recipient(message, recipient):
     # Try to send the email.
     try:
         # Provide the contents of the email.
-        response = client.send_raw_email(
+        client.send_raw_email(
            Source=SENDER,
            Destinations=[recipient],
            RawMessage={
@@ -143,11 +132,8 @@ def send_raw_ses_message_to_recipient(message, recipient):
         )
 
     # Display an error if something goes wrong.
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    else:
-        print("Email sent! Message ID:"),
-        print(response['MessageId'])
+    except ClientError:
+        logger.exception('Failed to send message')
 
 
 @on_exception(expo, RateLimitException)
@@ -164,7 +150,7 @@ def send_ses_message_to_recipient(message, recipient):
     # Try to send the email.
     try:
         # Provide the contents of the email.
-        response = client.send_email(
+        client.send_email(
             Destination={
                 'ToAddresses': [
                     recipient,
@@ -190,11 +176,8 @@ def send_ses_message_to_recipient(message, recipient):
         )
 
     # Display an error if something goes wrong.
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    else:
-        print("Email sent! Message ID:"),
-        print(response['MessageId'])
+    except ClientError:
+        logger.exception('Failed to send message')
 
 
 def main():
