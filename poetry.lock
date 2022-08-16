@@ -19,14 +19,14 @@ python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "boto3"
-version = "1.24.50"
+version = "1.24.52"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.50,<1.28.0"
+botocore = ">=1.27.52,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -35,7 +35,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.50"
+version = "1.27.52"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -47,7 +47,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = ">=1.25.4,<1.27"
 
 [package.extras]
-crt = ["awscrt (==0.13.8)"]
+crt = ["awscrt (==0.14.0)"]
 
 [[package]]
 name = "certifi"
@@ -129,7 +129,7 @@ pyflakes = ">=2.5.0,<2.6.0"
 
 [[package]]
 name = "gcn-kafka"
-version = "0.1.2"
+version = "0.2.0"
 description = "Kafka client for NASA's General Coordinates Network (GCN)"
 category = "main"
 optional = false
@@ -140,6 +140,9 @@ authlib = "*"
 certifi = "*"
 confluent-kafka = ">=1.6.1"
 requests = "*"
+
+[package.extras]
+test = ["pytest"]
 
 [[package]]
 name = "idna"
@@ -264,7 +267,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "0ef73042815f138919d38324a1df52abac10b587621f781372106d90150b6ca7"
+content-hash = "b76504659c8a8ae841609ba7bcb9ccce1b99a0e75c85ba906ad74861c63a6851"
 
 [metadata.files]
 authlib = [
@@ -276,12 +279,12 @@ backoff = [
     {file = "backoff-2.1.2.tar.gz", hash = "sha256:407f1bc0f22723648a8880821b935ce5df8475cf04f7b6b5017ae264d30f6069"},
 ]
 boto3 = [
-    {file = "boto3-1.24.50-py3-none-any.whl", hash = "sha256:c312c6ffb0c4eb94c6be2ab4471ca18ebcadc4a3abe048d1c9b437b7c6f1af10"},
-    {file = "boto3-1.24.50.tar.gz", hash = "sha256:28fefb77fb85b521a87ffd932621b14aabf4bb65ec4f9d9ce7399d093b2ad8bd"},
+    {file = "boto3-1.24.52-py3-none-any.whl", hash = "sha256:3e7664515a2228e695489600412644f59df4eb56202c5b4acab24f4d65e6e7c0"},
+    {file = "boto3-1.24.52.tar.gz", hash = "sha256:95a1f54b5cf5e09b81f5ee79f3704977951605683fa1aafa86438bedd1f22507"},
 ]
 botocore = [
-    {file = "botocore-1.27.50-py3-none-any.whl", hash = "sha256:697b76a58cfafa8ccbadcbf003efc693cf52170e562a8e2cfda9162d7d5aed20"},
-    {file = "botocore-1.27.50.tar.gz", hash = "sha256:0a3e2eef7a60c20e46be47eaf45cf5ea7a946aecdb68d829886d4f2506ac657c"},
+    {file = "botocore-1.27.52-py3-none-any.whl", hash = "sha256:31d1379ceebcbb572f3040901d76b91e9147c3be6523957a5f4da26ac0ba8ff2"},
+    {file = "botocore-1.27.52.tar.gz", hash = "sha256:30b1f14dec9a58995d7921893beaf3ce2f3289658ea2e7449a900b0c58d154b5"},
 ]
 certifi = [
     {file = "certifi-2022.6.15-py3-none-any.whl", hash = "sha256:fe86415d55e84719d75f8b69414f6438ac3547d2078ab91b67e779ef69378412"},
@@ -412,8 +415,8 @@ flake8 = [
     {file = "flake8-5.0.4.tar.gz", hash = "sha256:6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db"},
 ]
 gcn-kafka = [
-    {file = "gcn-kafka-0.1.2.tar.gz", hash = "sha256:cc9c709a7ce518e4696bcffe9377181b29c11954bcd1d7abf1a496fbea0ceee9"},
-    {file = "gcn_kafka-0.1.2-py3-none-any.whl", hash = "sha256:aa294501ff76ac57c85176797d6f8c0f1ef27914f07837a72314952ee11cae8f"},
+    {file = "gcn-kafka-0.2.0.tar.gz", hash = "sha256:bc29f33cafe88728b58ca9c7ef617c2f10001c18502950b3d6e3f668e4175c81"},
+    {file = "gcn_kafka-0.2.0-py3-none-any.whl", hash = "sha256:077871bacc455a7a10a31c4d80f9cce1cdb41660156846bd41fc358d77f3234e"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
