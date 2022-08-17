@@ -28,8 +28,9 @@ SUBJECT = "GCN/{}"
 # for multiple files
 ATTACHMENT = ""
 
-# Maximum send rate = 14 emails / Second
-MAX_SENDS = 14
+SES = boto3.client('ses')
+# Maximum send rate
+MAX_SENDS = SES.get_send_quota()['MaxSendRate']
 
 logger = logging.getLogger(__name__)
 
@@ -73,14 +74,14 @@ def recieve_alerts(consumer):
     ).Table(
         'table name here'
     )
-    ses = boto3.client('ses')
+
     while True:
         for message in consumer.consume():
             recipients = query_and_project_subscribers(
                 table, message.topic()
             )
             for recipient in recipients:
-                send_raw_ses_message_to_recipient(ses, message, recipient)
+                send_raw_ses_message_to_recipient(SES, message, recipient)
                 # send_ses_message_to_recipient(ses, message, recipient)
 
 
