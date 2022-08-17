@@ -74,7 +74,7 @@ def recieve_alerts(consumer):
     ).Table(
         'table name here'
     )
-    
+
     while True:
         for message in consumer.consume():
             recipients = query_and_project_subscribers(
