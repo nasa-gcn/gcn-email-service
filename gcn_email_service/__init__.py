@@ -19,9 +19,7 @@ from gcn_kafka import Consumer, config_from_env
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
 
-SENDER = "GCN Alerts <{}>".format(
-    config_from_env(prefix='EMAIL_')['EMAIL_SENDER']
-)
+SENDER = f'GCN Alerts <{os.environ["EMAIL_SENDER"]}>'
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
