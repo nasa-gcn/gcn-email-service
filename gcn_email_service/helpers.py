@@ -1,11 +1,11 @@
 import logging
 import threading
+import threading
 
-
-# Adapted from https://gist.github.com/Depado/7925679
 logger = logging.getLogger(__name__)
 
 
+# Adapted from https://gist.github.com/Depado/7925679
 def periodic_task(interval):
     def outer_wrap(function):
         def wrap(*args, **kwargs):
