@@ -19,6 +19,8 @@ from gcn_kafka import Consumer, config_from_env
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
 
+from .helpers import periodic_task
+
 SENDER = f'GCN Alerts <{os.environ["EMAIL_SENDER"]}>'
 RECIPIENT_TABLE = os.environ["RECIPIENT_TABLE"]
 CHARSET = "UTF-8"
@@ -58,6 +60,7 @@ def connect_as_consumer():
     return Consumer(config_from_env())
 
 
+@periodic_task(86400)
 def subscribe_to_topics(consumer):
     # list_topics also contains some non-topic values, filtering is necessary
     # This may need to be updated if new topics have a format different than
