@@ -1,6 +1,5 @@
 import logging
 import threading
-import threading
 
 logger = logging.getLogger(__name__)
 
