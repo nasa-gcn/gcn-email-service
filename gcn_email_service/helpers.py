@@ -15,8 +15,7 @@ def periodic_task(interval):
                     except Exception:
                         logger.exception('Periodic task failed')
 
-            t = threading.Timer(0, inner_wrap)
-            t.daemon = True
+            t = threading.Thread(target=inner_wrap, daemon=True)
             t.start()
             return stop
         return wrap
