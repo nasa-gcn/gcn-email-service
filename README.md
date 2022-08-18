@@ -13,6 +13,6 @@ The following environment variables may be used to configure the service:
 | `EMAIL_SENDER`       | Address to be used as the sender for emails sent through SES                       |
 | `RECIPIENT_TABLE`    | Name of the Dynamodb table to be queried against to retrieve the recipient emails  |
 
-This project requires an IAM role to provide permissions to AmazonDynamoDBReadonlyAccess and AmazonSESFullAccess which will allow for reading from the subscribers table and sending SES email notification respectively.
+This project requires an IAM role to provide permissions to AmazonSSMReadOnlyAccess, AmazonDynamoDBReadonlyAccess, and AmazonSESFullAccess which will allow for accessing the value of the stored subscribers table parameter, reading from that table, and sending SES email notifications respectively.
 
 [Confluent Platform docker containers]: https://docs.confluent.io/platform/current/installation/docker/config-reference.html
