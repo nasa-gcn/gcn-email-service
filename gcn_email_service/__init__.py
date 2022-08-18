@@ -20,6 +20,7 @@ from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
 
 SENDER = f'GCN Alerts <{os.environ["EMAIL_SENDER"]}>'
+RECIPIENT_TABLE = os.environ["RECIPIENT_TABLE"]
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
@@ -71,7 +72,7 @@ def recieve_alerts(consumer):
     table = boto3.resource(
         'dynamodb'
     ).Table(
-        'table name here'
+        RECIPIENT_TABLE
     )
 
     while True:
