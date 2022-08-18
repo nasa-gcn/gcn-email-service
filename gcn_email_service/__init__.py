@@ -21,8 +21,7 @@ from backoff import on_exception, expo
 
 from .helpers import periodic_task
 
-# TODO: update the sender for test and prod
-SENDER = "GCN Alerts <alerts@dev.gcn.nasa.gov>"
+SENDER = f'GCN Alerts <{os.environ["EMAIL_SENDER"]}>'
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
