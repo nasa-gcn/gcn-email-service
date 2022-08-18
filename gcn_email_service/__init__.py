@@ -22,7 +22,13 @@ from backoff import on_exception, expo
 from .helpers import periodic_task
 
 SENDER = f'GCN Alerts <{os.environ["EMAIL_SENDER"]}>'
-RECIPIENT_TABLE = os.environ["RECIPIENT_TABLE"]
+
+resource_client = boto3.client("ssm")
+param_request = resource_client.get_parameter(
+    Name="/RemixGcnProduction/tables/email_notification_subscription"
+)
+RECIPIENT_TABLE = param_request["Parameter"]["Value"]
+
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
