@@ -153,7 +153,7 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
     # Display an error if something goes wrong.
     except ClientError:
         logger.exception('Failed to send message')
-    
+
     finally:
         if ATTACHMENT:
             ATTACHMENT = False
