@@ -11,6 +11,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import logging
 import os
+import tempfile
 
 import boto3
 from botocore.exceptions import ClientError
@@ -63,10 +64,14 @@ def query_and_project_subscribers(table, topic):
 
 
 def connect_as_consumer():
-    return Consumer(config_from_env())
+    return Consumer(**config_from_env())
 
 
 @periodic_task(86400)
+def resubscribe(consumer):
+    subscribe_to_topics(consumer)
+
+
 def subscribe_to_topics(consumer):
     # list_topics also contains some non-topic values, filtering is necessary
     # This may need to be updated if new topics have a format different than
@@ -100,7 +105,15 @@ def recieve_alerts(consumer):
 @on_exception(expo, RateLimitException)
 @limits(calls=MAX_SENDS, period=1)
 def send_raw_ses_message_to_recipient(client, message, recipient):
-    BODY_TEXT = str(email.message_from_bytes(message.value()))
+    BODY_TEXT = ""
+    file = tempfile.NamedTemporaryFile()
+    if '.text.' in message.topic():
+        BODY_TEXT = str(email.message_from_bytes(message.value()))
+
+    else:
+        with open(file.name, 'wb') as f:
+            f.write(message.value())
+        ATTACHMENT = file.name
 
     # multipart/mixed parent container
     msg = MIMEMultipart('mixed')
@@ -139,6 +152,10 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
     # Display an error if something goes wrong.
     except ClientError:
         logger.exception('Failed to send message')
+    
+    finally:
+        if ATTACHMENT:
+           ATTACHMENT = ""
 
 
 @on_exception(expo, RateLimitException)
@@ -186,4 +203,5 @@ def send_ses_message_to_recipient(client, message, recipient):
 def main():
     consumer = connect_as_consumer()
     subscribe_to_topics(consumer)
+    resubscribe(consumer)
     recieve_alerts(consumer)
