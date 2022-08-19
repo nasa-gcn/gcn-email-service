@@ -156,7 +156,7 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
     
     finally:
         if ATTACHMENT:
-           ATTACHMENT = False
+            ATTACHMENT = False
 
 
 @on_exception(expo, RateLimitException)
