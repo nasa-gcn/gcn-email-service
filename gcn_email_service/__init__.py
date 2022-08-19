@@ -64,7 +64,7 @@ def query_and_project_subscribers(table, topic):
 
 
 def connect_as_consumer():
-    return Consumer(**config_from_env())
+    return Consumer(config_from_env())
 
 
 @periodic_task(86400)
