@@ -35,7 +35,7 @@ SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
 # Can probably be used to draw from a bucket, also still need to try
 # for multiple files
-ATTACHMENT = ""
+ATTACHMENT = False
 
 SES = boto3.client('ses')
 # Maximum send rate
@@ -107,13 +107,13 @@ def recieve_alerts(consumer):
 def send_raw_ses_message_to_recipient(client, message, recipient):
     BODY_TEXT = ""
     file = tempfile.NamedTemporaryFile()
+    global ATTACHMENT
     if '.text.' in message.topic():
         BODY_TEXT = str(email.message_from_bytes(message.value()))
 
     else:
-        with open(file.name, 'wb') as f:
-            f.write(message.value())
-        ATTACHMENT = file.name
+        file.write(message.value())
+        ATTACHMENT = True
 
     # multipart/mixed parent container
     msg = MIMEMultipart('mixed')
@@ -129,13 +129,14 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
     # Define attachment part:
     if ATTACHMENT:
         # Define the attachment part and encode it using MIMEApplication.
-        att = MIMEApplication(open(ATTACHMENT, 'rb').read())
+        att = MIMEApplication(message.value())
 
         # Add a header to tell the email client to treat this part as an
         # attachment, and to give the attachment a name.
+        fileExt = ".xml" if '.voevent.' in message.topic() else ".bin"
         att.add_header(
             'Content-Disposition', 'attachment',
-            filename=os.path.basename(ATTACHMENT))
+            filename=os.path.basename(f"notification{fileExt}"))
         msg.attach(att)
 
     # Try to send the email.
@@ -155,7 +156,7 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
     
     finally:
         if ATTACHMENT:
-           ATTACHMENT = ""
+           ATTACHMENT = False
 
 
 @on_exception(expo, RateLimitException)
