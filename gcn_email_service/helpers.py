@@ -12,11 +12,11 @@ def periodic_task(interval):
 
             def inner_wrap():
                 while not stop.is_set():
-                    stop.wait(interval)
                     try:
                         function(*args, **kwargs)
                     except Exception:
                         logger.exception('Periodic task failed')
+                    stop.wait(interval)
 
             t = threading.Thread(target=inner_wrap, daemon=True)
             t.start()
