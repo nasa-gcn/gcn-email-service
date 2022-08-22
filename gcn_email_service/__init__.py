@@ -204,5 +204,4 @@ def send_ses_message_to_recipient(client, message, recipient):
 def main():
     consumer = connect_as_consumer()
     subscribe_to_topics(consumer)
-    resubscribe(consumer)
     recieve_alerts(consumer)
