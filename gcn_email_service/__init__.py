@@ -68,10 +68,6 @@ def connect_as_consumer():
 
 
 @periodic_task(86400)
-def resubscribe(consumer):
-    subscribe_to_topics(consumer)
-
-
 def subscribe_to_topics(consumer):
     # list_topics also contains some non-topic values, filtering is necessary
     # This may need to be updated if new topics have a format different than
