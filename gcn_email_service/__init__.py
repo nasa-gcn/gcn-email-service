@@ -11,7 +11,6 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import logging
 import os
-import tempfile
 
 import boto3
 from botocore.exceptions import ClientError
@@ -35,7 +34,6 @@ SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
 # Can probably be used to draw from a bucket, also still need to try
 # for multiple files
-ATTACHMENT = False
 
 SES = boto3.client('ses')
 # Maximum send rate
@@ -72,6 +70,7 @@ def subscribe_to_topics(consumer):
     # list_topics also contains some non-topic values, filtering is necessary
     # This may need to be updated if new topics have a format different than
     # 'gcn.classic.[text | voevent | binary].[topic]'
+    print("Sub called")
     topics = [
         topic for topic in consumer.list_topics().topics
         if topic.startswith('gcn.')]
@@ -102,13 +101,11 @@ def recieve_alerts(consumer):
 @limits(calls=MAX_SENDS, period=1)
 def send_raw_ses_message_to_recipient(client, message, recipient):
     BODY_TEXT = ""
-    file = tempfile.NamedTemporaryFile()
-    global ATTACHMENT
+    ATTACHMENT = False
     if '.text.' in message.topic():
         BODY_TEXT = str(email.message_from_bytes(message.value()))
 
     else:
-        file.write(message.value())
         ATTACHMENT = True
 
     # multipart/mixed parent container
@@ -149,10 +146,6 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
     # Display an error if something goes wrong.
     except ClientError:
         logger.exception('Failed to send message')
-
-    finally:
-        if ATTACHMENT:
-            ATTACHMENT = False
 
 
 @on_exception(expo, RateLimitException)
