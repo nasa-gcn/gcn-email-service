@@ -129,7 +129,7 @@ pyflakes = ">=2.5.0,<2.6.0"
 
 [[package]]
 name = "gcn-kafka"
-version = "0.2.0"
+version = "0.2.2"
 description = "Kafka client for NASA's General Coordinates Network (GCN)"
 category = "main"
 optional = false
@@ -267,7 +267,7 @@ brotli = ["brotlipy (>=0.6.0)", "brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "b76504659c8a8ae841609ba7bcb9ccce1b99a0e75c85ba906ad74861c63a6851"
+content-hash = "51e655ff712ee6e3dfb8ffc9d10213a918db7faeda2e6914f53465a617ce9685"
 
 [metadata.files]
 authlib = [
@@ -415,8 +415,8 @@ flake8 = [
     {file = "flake8-5.0.4.tar.gz", hash = "sha256:6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db"},
 ]
 gcn-kafka = [
-    {file = "gcn-kafka-0.2.0.tar.gz", hash = "sha256:bc29f33cafe88728b58ca9c7ef617c2f10001c18502950b3d6e3f668e4175c81"},
-    {file = "gcn_kafka-0.2.0-py3-none-any.whl", hash = "sha256:077871bacc455a7a10a31c4d80f9cce1cdb41660156846bd41fc358d77f3234e"},
+    {file = "gcn-kafka-0.2.2.tar.gz", hash = "sha256:c8179c28b13b3d12a71058e5b68e4216fadb8f2dd2c2551bf88f6773ff09677a"},
+    {file = "gcn_kafka-0.2.2-py3-none-any.whl", hash = "sha256:a22150c60b4d1ff24bc91634d8f10677a25f8c4927121a62d15d71740169d60b"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
