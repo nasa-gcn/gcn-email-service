@@ -70,7 +70,6 @@ def subscribe_to_topics(consumer):
     # list_topics also contains some non-topic values, filtering is necessary
     # This may need to be updated if new topics have a format different than
     # 'gcn.classic.[text | voevent | binary].[topic]'
-    print("Sub called")
     topics = [
         topic for topic in consumer.list_topics().topics
         if topic.startswith('gcn.')]
