@@ -100,11 +100,11 @@ def recieve_alerts(consumer):
 @limits(calls=MAX_SENDS, period=1)
 def send_raw_ses_message_to_recipient(client, message, recipient):
     bodyText = ""
-    ATTACHMENT = False
+    attachment = False
     if '.text.' in message.topic():
         bodyText = message.value().decode()# str(email.message_from_bytes(message.value()))
     else:
-        ATTACHMENT = True
+        attachment = True
 
     # multipart/mixed parent container
     msg = MIMEMultipart('mixed')
@@ -118,7 +118,7 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
 
     msg.attach(msg_body)
     # Define attachment part:
-    if ATTACHMENT:
+    if attachment:
         # Define the attachment part and encode it using MIMEApplication.
         att = MIMEApplication(message.value())
 
