@@ -99,11 +99,10 @@ def recieve_alerts(consumer):
 @on_exception(expo, RateLimitException)
 @limits(calls=MAX_SENDS, period=1)
 def send_raw_ses_message_to_recipient(client, message, recipient):
-    BODY_TEXT = ""
+    bodyText = ""
     ATTACHMENT = False
     if '.text.' in message.topic():
-        BODY_TEXT = str(email.message_from_bytes(message.value()))
-
+        bodyText = message.value().decode()# str(email.message_from_bytes(message.value()))
     else:
         ATTACHMENT = True
 
@@ -114,7 +113,7 @@ def send_raw_ses_message_to_recipient(client, message, recipient):
     msg['To'] = recipient
 
     msg_body = MIMEMultipart('alternative')
-    text_part = MIMEText(BODY_TEXT.encode(CHARSET), 'plain', CHARSET)
+    text_part = MIMEText(bodyText.encode(CHARSET), 'plain', CHARSET)
     msg_body.attach(text_part)
 
     msg.attach(msg_body)
