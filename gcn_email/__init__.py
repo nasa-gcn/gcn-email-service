@@ -23,12 +23,6 @@ from .helpers import periodic_task
 
 SENDER = f'GCN Alerts <{os.environ["EMAIL_SENDER"]}>'
 
-resource_client = boto3.client("ssm")
-param_request = resource_client.get_parameter(
-    Name="/RemixGcnProduction/tables/email_notification_subscription"
-)
-RECIPIENT_TABLE = param_request["Parameter"]["Value"]
-
 CHARSET = "UTF-8"
 SUBJECT = "GCN/{}"
 # Used for testing attachment sends, works for a local file
@@ -40,6 +34,14 @@ SES = boto3.client('ses')
 MAX_SENDS = SES.get_send_quota()['MaxSendRate']
 
 logger = logging.getLogger(__name__)
+
+
+def get_email_notification_subscription_table():
+    client = boto3.client('ssm')
+    result = client.get_parameter(
+        Name='/RemixGcnProduction/tables/email_notification_subscription')
+    table_name = result['Parameter']['Value']
+    return boto3.resource('dynamodb').Table(table_name)
 
 
 def query_and_project_subscribers(table, topic):
@@ -77,11 +79,7 @@ def subscribe_to_topics(consumer):
 
 
 def recieve_alerts(consumer):
-    table = boto3.resource(
-        'dynamodb'
-    ).Table(
-        RECIPIENT_TABLE
-    )
+    table = get_email_notification_subscription_table()
 
     while True:
         for message in consumer.consume():
