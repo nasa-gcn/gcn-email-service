@@ -8,6 +8,6 @@ RUN $HOME/.poetry/bin/poetry install --no-dev
 FROM python:3.10-slim
 COPY --from=build /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 COPY --from=build /src/ /src/
-COPY --from=build /usr/local/bin/gcn-email-service /usr/local/bin/
-ENTRYPOINT ["gcn-email-service"]
+COPY --from=build /usr/local/bin/gcn-email /usr/local/bin/
+ENTRYPOINT ["gcn-email"]
 USER nobody:nogroup
