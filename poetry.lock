@@ -88,10 +88,10 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-avro = ["avro (==1.10.0)", "requests", "fastavro (>=0.23.0,<1.0)", "fastavro (>=1.0)"]
-dev = ["pytest-timeout", "flake8", "avro (==1.10.0)", "requests", "pytest (==4.6.4)", "fastavro (>=0.23.0,<1.0)", "fastavro (>=1.0)", "pytest"]
-doc = ["sphinx", "sphinx-rtd-theme", "avro (==1.10.0)", "requests", "fastavro (>=0.23.0,<1.0)", "fastavro (>=1.0)"]
-json = ["jsonschema", "requests", "pyrsistent (==0.16.1)", "pyrsistent"]
+avro = ["avro (==1.10.0)", "fastavro (>=0.23.0,<1.0)", "fastavro (>=1.0)", "requests"]
+dev = ["avro (==1.10.0)", "fastavro (>=0.23.0,<1.0)", "fastavro (>=1.0)", "flake8", "pytest", "pytest (==4.6.4)", "pytest-timeout", "requests"]
+doc = ["avro (==1.10.0)", "fastavro (>=0.23.0,<1.0)", "fastavro (>=1.0)", "requests", "sphinx", "sphinx-rtd-theme"]
+json = ["jsonschema", "pyrsistent", "pyrsistent (==0.16.1)", "requests"]
 protobuf = ["protobuf", "requests"]
 schema-registry = ["requests"]
 
@@ -108,11 +108,11 @@ cffi = ">=1.12"
 
 [package.extras]
 docs = ["sphinx (>=1.6.5,!=1.8.0,!=3.1.0,!=3.1.1)", "sphinx-rtd-theme"]
-docstest = ["pyenchant (>=1.6.11)", "twine (>=1.12.0)", "sphinxcontrib-spelling (>=4.0.1)"]
+docstest = ["pyenchant (>=1.6.11)", "sphinxcontrib-spelling (>=4.0.1)", "twine (>=1.12.0)"]
 pep8test = ["black", "flake8", "flake8-import-order", "pep8-naming"]
 sdist = ["setuptools_rust (>=0.11.4)"]
 ssh = ["bcrypt (>=3.1.5)"]
-test = ["pytest (>=6.2.0)", "pytest-benchmark", "pytest-cov", "pytest-subtests", "pytest-xdist", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
+test = ["hypothesis (>=1.11.4,!=3.79.2)", "iso8601", "pretend", "pytest (>=6.2.0)", "pytest-benchmark", "pytest-cov", "pytest-subtests", "pytest-xdist", "pytz"]
 
 [[package]]
 name = "flake8"
@@ -129,7 +129,7 @@ pyflakes = ">=2.5.0,<2.6.0"
 
 [[package]]
 name = "gcn-kafka"
-version = "0.2.2"
+version = "0.2.3"
 description = "Kafka client for NASA's General Coordinates Network (GCN)"
 category = "main"
 optional = false
@@ -260,14 +260,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
 
 [package.extras]
-brotli = ["brotlicffi (>=0.8.0)", "brotli (>=1.0.9)", "brotlipy (>=0.6.0)"]
-secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "urllib3-secure-extra", "ipaddress"]
+brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)", "brotlipy (>=0.6.0)"]
+secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "pyOpenSSL (>=0.14)", "urllib3-secure-extra"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "51e655ff712ee6e3dfb8ffc9d10213a918db7faeda2e6914f53465a617ce9685"
+content-hash = "70ed6765ac2d33bfc9a67a649ccd1a64a0d14d83df88224971ac9bd6dd0f4e8a"
 
 [metadata.files]
 authlib = [
@@ -415,8 +415,8 @@ flake8 = [
     {file = "flake8-5.0.4.tar.gz", hash = "sha256:6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db"},
 ]
 gcn-kafka = [
-    {file = "gcn-kafka-0.2.2.tar.gz", hash = "sha256:c8179c28b13b3d12a71058e5b68e4216fadb8f2dd2c2551bf88f6773ff09677a"},
-    {file = "gcn_kafka-0.2.2-py3-none-any.whl", hash = "sha256:a22150c60b4d1ff24bc91634d8f10677a25f8c4927121a62d15d71740169d60b"},
+    {file = "gcn-kafka-0.2.3.tar.gz", hash = "sha256:44747bdb0e25362887d9e421f63480c6701a9b6e0a3b3019a799cd905607d308"},
+    {file = "gcn_kafka-0.2.3-py3-none-any.whl", hash = "sha256:ac51a35c1c597786decdbc1cb422d7a012a63c28e221c4a2f20434cf6d33d810"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},
