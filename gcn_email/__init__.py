@@ -15,6 +15,7 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key
+import click
 from gcn_kafka import Consumer, config_from_env
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
@@ -187,7 +188,12 @@ def send_ses_message_to_recipient(client, message, recipient):
         logger.exception('Failed to send message')
 
 
-def main():
+@click.command()
+@click.option(
+    '--loglevel', type=click.Choice(logging._levelToName.values()),
+    default='INFO', show_default=True, help='Log level')
+def main(loglevel):
+    logging.basicConfig(level=loglevel)
     consumer = connect_as_consumer()
     subscribe_to_topics(consumer)
     recieve_alerts(consumer)
