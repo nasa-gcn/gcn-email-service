@@ -22,7 +22,8 @@ The following is the minimum AWS IAM policy to grant the necessary permissions t
     "Statement": [
         {
             "Action": [
-                "ses:SendEmail"
+                "ses:SendEmail",
+                "ses:SendRawEmail"
             ],
             "Resource": "arn:aws:ses:<region>:<account>:identity/<domain>",
             "Effect": "Allow"
