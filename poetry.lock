@@ -19,14 +19,14 @@ python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "boto3"
-version = "1.26.13"
+version = "1.26.17"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.29.13,<1.30.0"
+botocore = ">=1.29.17,<1.30.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -35,7 +35,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.29.13"
+version = "1.29.17"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -296,7 +296,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.9"
+python-versions = "~3.11"
 content-hash = "b06c4ce4eed5ae35db1ce2fbe68696e2b7138bf432f65d6b3921ab7ae7653c55"
 
 [metadata.files]
@@ -309,12 +309,12 @@ backoff = [
     {file = "backoff-2.2.1.tar.gz", hash = "sha256:03f829f5bb1923180821643f8753b0502c3b682293992485b0eef2807afa5cba"},
 ]
 boto3 = [
-    {file = "boto3-1.26.13-py3-none-any.whl", hash = "sha256:a8ad13a23745b6d4a56d5bdde53a7a80cd7b40016cd411b9a94e6bbfb2ca5dd2"},
-    {file = "boto3-1.26.13.tar.gz", hash = "sha256:853cf4b2136c4deec4e01a17b89126377bfca30223535795d879ca65af4c4a69"},
+    {file = "boto3-1.26.17-py3-none-any.whl", hash = "sha256:c39b7e87b27b00dcf452b2fc80252d311e275036f3d48464af34d0123077f985"},
+    {file = "boto3-1.26.17.tar.gz", hash = "sha256:bb40a9788dd2234851cdd1110eec0e3f6b3af6b98280924fa44c25199ced5737"},
 ]
 botocore = [
-    {file = "botocore-1.29.13-py3-none-any.whl", hash = "sha256:9c73a180fad9a7da7797530ced3b5069872bff915b1ae9fa11fc1ed79b584c8e"},
-    {file = "botocore-1.29.13.tar.gz", hash = "sha256:9d39db398f472c0aa97098870c8c4cf12636b2667a18e694fea5fae046af907e"},
+    {file = "botocore-1.29.17-py3-none-any.whl", hash = "sha256:d4bab7d42acdb18effa33fee53d137b8b1bdedc2da196428a2d1e04a123778bc"},
+    {file = "botocore-1.29.17.tar.gz", hash = "sha256:4be7ca8c581dbc6e8584876c4347dcc4f4bc6aa6e6e8131901fc11816fc8151b"},
 ]
 certifi = [
     {file = "certifi-2022.6.15-py3-none-any.whl", hash = "sha256:fe86415d55e84719d75f8b69414f6438ac3547d2078ab91b67e779ef69378412"},
@@ -427,6 +427,7 @@ confluent-kafka = [
 cryptography = [
     {file = "cryptography-38.0.3-cp36-abi3-macosx_10_10_universal2.whl", hash = "sha256:984fe150f350a3c91e84de405fe49e688aa6092b3525f407a18b9646f6612320"},
     {file = "cryptography-38.0.3-cp36-abi3-macosx_10_10_x86_64.whl", hash = "sha256:ed7b00096790213e09eb11c97cc6e2b757f15f3d2f85833cd2d3ec3fe37c1722"},
+    {file = "cryptography-38.0.3-cp36-abi3-macosx_10_12_universal2.whl", hash = "sha256:726e3a1bfee0e919b278c8f766fdcf1fe30f8e6feea590e3f248d3636b58ffb3"},
     {file = "cryptography-38.0.3-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_24_aarch64.whl", hash = "sha256:bbf203f1a814007ce24bd4d51362991d5cb90ba0c177a9c08825f2cc304d871f"},
     {file = "cryptography-38.0.3-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:554bec92ee7d1e9d10ded2f7e92a5d70c1f74ba9524947c0ba0c850c7b011828"},
     {file = "cryptography-38.0.3-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b1b52c9e5f8aa2b802d48bd693190341fae201ea51c7a167d69fc48b60e8a959"},
