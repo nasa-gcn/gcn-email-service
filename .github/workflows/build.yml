@@ -31,7 +31,6 @@ jobs:
     environment:
       name: ${{ matrix.env }}
       url: ${{ matrix.url }}
-    if: (github.event_name == 'pull_request' && matrix.env == '') || (github.event_name == 'push' && matrix.env != '')
 
     steps:
       - name: Checkout repository
