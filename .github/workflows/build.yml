@@ -31,6 +31,7 @@ jobs:
     environment:
       name: ${{ matrix.env }}
       url: ${{ matrix.url }}
+    if: (github.event_name == 'pull_request' && matrix.env == '') || (github.event_name == 'push' && matrix.env != '')
 
     steps:
       - name: Checkout repository
@@ -80,7 +81,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=raw,enable=${{ matrix.env }},value=${{ matrix.env }}-{{ date 'YYYYMMDDThhmmss' }}
+            type=raw,enable=${{ matrix.env != '' }},value=${{ matrix.env }}-{{ date 'YYYYMMDDThhmmss' }}
 
       - name: Push Docker image
         if: steps.meta.outputs.tag
