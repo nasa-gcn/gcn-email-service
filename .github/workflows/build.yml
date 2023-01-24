@@ -4,8 +4,8 @@ on:
   pull_request:
 
 jobs:
-  python:
-    name: Python tests
+  docker:
+    name: Docker tests
     runs-on: ubuntu-latest
 
     steps:
