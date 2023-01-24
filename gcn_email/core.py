@@ -56,7 +56,7 @@ def query_and_project_subscribers(table, topic):
 
 def connect_as_consumer():
     log.info('Connecting to Kafka')
-    return Consumer(config_from_env())
+    return Consumer(config_from_env(), **{'enable.auto.commit': False})
 
 
 @periodic_task(86400)
@@ -105,6 +105,7 @@ def recieve_alerts(consumer):
                         log.exception('Failed to send message')
                     else:
                         metrics.sent.labels(topic, recipient).inc()
+            consumer.commit(message)
 
 
 # Alternatively, we can import sleep_and_retry from ratelimit
