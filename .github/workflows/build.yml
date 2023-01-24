@@ -71,7 +71,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=match,pattern=(dev|test|prod),value={{raw}}-{{date 'YYYYMMDDThhmmss'}}
+            type=raw,enable=${{ github.ref_name == 'dev' || github.ref_name == 'test' || github.ref_name == 'prod'}},value=${{ github.ref_name }}-{{ date 'YYYYMMDDThhmmss' }}
 
       - name: Push Docker image
         if: steps.meta.outputs.tag
