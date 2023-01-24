@@ -83,10 +83,8 @@ jobs:
             type=raw,enable=${{ matrix.env != '' }},value=${{ matrix.env }}-{{ date 'YYYYMMDDThhmmss' }}
 
       - name: Push Docker image
-        if: steps.meta.outputs.tag
         uses: docker/build-push-action@v3
         with:
           context: .
-          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
