@@ -20,7 +20,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {}
+          - env:
+            url:
           - env: dev
             url: https://dev.gcn.nasa.gov
           - env: test
