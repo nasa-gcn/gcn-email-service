@@ -22,7 +22,7 @@ jobs:
       #   run: docker run --rm --user root:root --entrypoint bash ${{ github.repository }}:test -c 'pip install pytest-asyncio && pytest --pyargs gcn_classic_to_kafka'
 
   python:
-    name: Docker tests
+    name: Python tests
     runs-on: ubuntu-latest
 
     steps:
