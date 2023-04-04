@@ -16,6 +16,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          tags: ${{ github.repository }}:test
 
       # - name: Test Docker image
       #   run: docker run --rm --user root:root --entrypoint bash ${{ github.repository }}:test -c 'pip install pytest-asyncio && pytest --pyargs gcn_classic_to_kafka'
