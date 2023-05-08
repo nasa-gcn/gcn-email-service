@@ -14,7 +14,7 @@ The following environment variables may be used to configure the service:
 
 ## IAM Policy
 
-The following is the minimum AWS IAM policy to grant the necessary permissions to this service. Replace `<region>` with the AWS region (e.g. `us-east-1`, `<account>` with the AWS account ID, and `<domain>` with the verified SES domain (e.g. `test.gcn.nasa.gov`.))
+The following is the minimum AWS IAM policy to grant the necessary permissions to this service. Replace `<region>` with the AWS region (e.g. `us-east-1`), `<account>` with the AWS account ID, `<domain>` with the verified SES domain (e.g. `test.gcn.nasa.gov`), and `<configuration-set>` with the SES configuration set.
 
 ```json
 {
@@ -25,7 +25,10 @@ The following is the minimum AWS IAM policy to grant the necessary permissions t
                 "ses:SendEmail",
                 "ses:SendRawEmail"
             ],
-            "Resource": "arn:aws:ses:<region>:<account>:identity/<domain>",
+            "Resource": [
+                "arn:aws:ses:<region>:<account>:identity/<domain>",
+                "arn:aws:ses:<region>:<account>:configuration-set/<configuration-set>"
+            ],
             "Effect": "Allow"
         },
         {
