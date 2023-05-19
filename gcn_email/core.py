@@ -84,7 +84,7 @@ def kafka_message_to_email(message):
         email_message.add_attachment(
             message.value(), filename='notice.bin',
             maintype='application', subtype='octet-stream')
-    email_message['Subject'] = topic
+    email_message['Subject'] = f"{topic}: #{message.offset()}"
     return email_message.as_bytes()
 
 
