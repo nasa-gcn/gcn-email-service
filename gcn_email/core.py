@@ -64,9 +64,7 @@ def subscribe_to_topics(consumer: Consumer):
     # list_topics also contains some non-topic values, filtering is necessary
     # This may need to be updated if new topics have a format different than
     # 'gcn.classic.[text | voevent | binary].[topic]'
-    topics = [
-        topic for topic in consumer.list_topics().topics
-        if topic.startswith('gcn.')]
+    topics = [topic for topic in consumer.list_topics().topics]
     log.info('Subscribing to topics: %r', topics)
     consumer.subscribe(topics)
 
@@ -80,10 +78,15 @@ def kafka_message_to_email(message):
         email_message.add_attachment(
             message.value(), filename='notice.xml',
             maintype='application', subtype='xml')
-    else:
+    elif topic.startswith('gcn.classic.binary.'):
         email_message.add_attachment(
             message.value(), filename='notice.bin',
             maintype='application', subtype='octet-stream')
+    else:
+        email_message.add_attachment(
+            message.value(), filename='notice.json',
+            maintype='application', subtype='json'
+        )
     email_message['Subject'] = topic
     return email_message.as_bytes()
 
