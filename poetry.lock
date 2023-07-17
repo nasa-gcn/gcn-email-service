@@ -346,13 +346,13 @@ files = [
 
 [[package]]
 name = "prometheus-client"
-version = "0.17.0"
+version = "0.17.1"
 description = "Python client for the Prometheus monitoring system."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "prometheus_client-0.17.0-py3-none-any.whl", hash = "sha256:a77b708cf083f4d1a3fb3ce5c95b4afa32b9c521ae363354a4a910204ea095ce"},
-    {file = "prometheus_client-0.17.0.tar.gz", hash = "sha256:9c3b26f1535945e85b8934fb374678d263137b78ef85f305b1156c7c881cd11b"},
+    {file = "prometheus_client-0.17.1-py3-none-any.whl", hash = "sha256:e537f37160f6807b8202a6fc4764cdd19bac5480ddd3e0d463c3002b34462101"},
+    {file = "prometheus_client-0.17.1.tar.gz", hash = "sha256:21e674f39831ae3f8acde238afd9a27a37d0d2fb5a28ea094f0ce25d2cbf2091"},
 ]
 
 [package.extras]
@@ -483,4 +483,4 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "8a70fa5c6a172549c324b197c8f7474bc8b526fa0af0332ad1eca3d7d781e6d6"
+content-hash = "631b8fed4a6f82696f602d8ac8e53be4eb4efee82883e866b918f6639f3b2f3a"
