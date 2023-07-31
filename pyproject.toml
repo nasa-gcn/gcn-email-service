@@ -8,6 +8,7 @@ authors = ["Dakota Dutko <dakota.c.dutko@nasa.gov>", "Leo Singer <leo.singer@lig
 [tool.poetry.dependencies]
 backoff = "*"
 boto3 = "*"
+confluent-kafka = ">=2.2.0"  # first working version with aarch64 wheels
 gcn-kafka = "^0.3.2"
 python = "^3.9"
 ratelimit = "*"
