@@ -2,7 +2,7 @@
 name = "gcn-email"
 version = "0.1.0"
 description = "Kafka to email notification service"
-license = "NASA-1.3"
+license = "Apache-2.0"
 authors = ["Dakota Dutko <dakota.c.dutko@nasa.gov>", "Leo Singer <leo.singer@ligo.org>"]
 
 [tool.poetry.dependencies]
