@@ -92,6 +92,10 @@ def recieve_alerts(consumer):
     table = get_email_notification_subscription_table()
     while True:
         for message in consumer.consume(timeout=1):
+            error = message.error()
+            if error is not None:
+                log.error('Error consuming message: %s', error)
+                continue
             topic = message.topic()
             metrics.received.labels(topic).inc()
             recipients = query_and_project_subscribers(table, topic)
