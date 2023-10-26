@@ -31,25 +31,23 @@ log = logging.getLogger(__name__)
 def get_email_notification_subscription_table():
     client = boto3.client('ssm')
     result = client.get_parameter(
-        Name='/RemixGcnProduction/tables/email_notification_subscription'
-    )
+        Name='/RemixGcnProduction/tables/email_notification_subscription')
     table_name = result['Parameter']['Value']
     return boto3.resource('dynamodb').Table(table_name)
 
 
 def query_and_project_subscribers(table, topic):
-    '''
+    """
     Query for subscribed emails for a given topic
     :param topic: The topic for a consumed kafka notification.
     :return: The list of recipient emails.
-    '''
+    """
     try:
         response = table.query(
             IndexName='byTopic',
-            ProjectionExpression='#topic, recipient',
-            ExpressionAttributeNames={'#topic': 'topic'},
-            KeyConditionExpression=(Key('topic').eq(topic)),
-        )
+            ProjectionExpression="#topic, recipient",
+            ExpressionAttributeNames={"#topic": "topic"},
+            KeyConditionExpression=(Key('topic').eq(topic)))
     except Exception:
         log.exception('Failed to query recipients')
         return []
@@ -79,18 +77,12 @@ def kafka_message_to_email(message):
         email_message.set_content(message.value().decode())
     elif topic.startswith('gcn.classic.voevent.'):
         email_message.add_attachment(
-            message.value(),
-            filename='notice.xml',
-            maintype='application',
-            subtype='xml',
-        )
+            message.value(), filename='notice.xml',
+            maintype='application', subtype='xml')
     elif topic.startswith('gcn.classic.binary.'):
         email_message.add_attachment(
-            message.value(),
-            filename='notice.bin',
-            maintype='application',
-            subtype='octet-stream',
-        )
+            message.value(), filename='notice.bin',
+            maintype='application', subtype='octet-stream')
     else:
         message_JSON = message.value().decode()
         # Strip out large data fields here...
@@ -132,7 +124,7 @@ def recieve_alerts(consumer):
         SESV2.exceptions.SendingPausedException,
         SESV2.exceptions.TooManyRequestsException,
     ),
-    max_time=300,
+    max_time=300
 )
 @limits(calls=MAX_SENDS, period=1)
 @metrics.send_request_latency_seconds.time()
@@ -140,5 +132,4 @@ def send_raw_ses_message_to_recipient(bytes, recipient):
     SESV2.send_email(
         FromEmailAddress=SENDER,
         Destination={'ToAddresses': [recipient]},
-        Content={'Raw': {'Data': bytes}},
-    )
+        Content={'Raw': {'Data': bytes}})
