@@ -8,6 +8,8 @@
 from email.message import EmailMessage
 import logging
 import os
+import json
+import sys
 
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -25,6 +27,27 @@ SENDER = f'GCN Notices <{os.environ["EMAIL_SENDER"]}>'
 MAX_SENDS = boto3.client("ses").get_send_quota()["MaxSendRate"]
 
 log = logging.getLogger(__name__)
+
+
+REPLACEMENT_TEXT = (
+    "This content is too large for email. "
+    "To receive it, see https://gcn.nasa.gov/quickstart"
+)
+
+
+def replace_long_values(data, max_length):
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if isinstance(value, (str, bytes)) and len(value) > max_length:
+                data[key] = REPLACEMENT_TEXT
+            else:
+                replace_long_values(value, max_length)
+    elif isinstance(data, list):
+        for index, item in enumerate(data):
+            if isinstance(item, (str, bytes)) and len(item) > max_length:
+                data[index] = REPLACEMENT_TEXT
+            else:
+                replace_long_values(item, max_length)
 
 
 def get_email_notification_subscription_table():
