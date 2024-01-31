@@ -20,22 +20,31 @@ def host_port(host_port_str):
     # Parse netloc like it is done for HTTP URLs.
     # This ensures that we will get the correct behavior for hostname:port
     # splitting even for IPv6 addresses.
-    return urllib.parse.urlparse(f'http://{host_port_str}')
+    return urllib.parse.urlparse(f"http://{host_port_str}")
 
 
 @click.command()
 @click.option(
-    '--prometheus', type=host_port, default=':8000', show_default=True,
-    help='Hostname and port to listen on for Prometheus metric reporting')
+    "--prometheus",
+    type=host_port,
+    default=":8000",
+    show_default=True,
+    help="Hostname and port to listen on for Prometheus metric reporting",
+)
 @click.option(
-    '--loglevel', type=click.Choice(logging._levelToName.values()),
-    default='INFO', show_default=True, help='Log level')
+    "--loglevel",
+    type=click.Choice(logging._levelToName.values()),
+    default="INFO",
+    show_default=True,
+    help="Log level",
+)
 def main(prometheus, loglevel):
     logging.basicConfig(level=loglevel)
 
-    prometheus_client.start_http_server(prometheus.port,
-                                        prometheus.hostname or '0.0.0.0')
-    log.info('Prometheus listening on %s', prometheus.netloc)
+    prometheus_client.start_http_server(
+        prometheus.port, prometheus.hostname or "0.0.0.0"
+    )
+    log.info("Prometheus listening on %s", prometheus.netloc)
 
     consumer = connect_as_consumer()
     subscribe_to_topics(consumer)
