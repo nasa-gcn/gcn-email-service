@@ -9,7 +9,6 @@ from email.message import EmailMessage
 import logging
 import os
 import json
-import sys
 
 import boto3
 from boto3.dynamodb.conditions import Key
