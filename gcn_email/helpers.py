@@ -15,11 +15,13 @@ def periodic_task(interval):
                     try:
                         function(*args, **kwargs)
                     except Exception:
-                        log.exception('Periodic task failed')
+                        log.exception("Periodic task failed")
                     stop.wait(interval)
 
             t = threading.Thread(target=inner_wrap, daemon=True)
             t.start()
             return stop
+
         return wrap
+
     return outer_wrap
