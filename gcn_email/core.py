@@ -8,6 +8,7 @@
 from email.message import EmailMessage
 import logging
 import os
+import json
 
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -25,6 +26,26 @@ SENDER = f'GCN Notices <{os.environ["EMAIL_SENDER"]}>'
 MAX_SENDS = boto3.client("ses").get_send_quota()["MaxSendRate"]
 
 log = logging.getLogger(__name__)
+
+
+REPLACEMENT_TEXT = (
+    "This content is too large for email. "
+    "To receive it, see https://gcn.nasa.gov/quickstart"
+)
+
+
+def replace_long_values(data, max_length):
+    if isinstance(data, dict):
+        iter = data.items()
+    elif isinstance(data, list):
+        iter = enumerate(data)
+    else:
+        return
+    for key, value in iter:
+        if isinstance(value, str) and len(value) > max_length:
+            data[key] = REPLACEMENT_TEXT
+        else:
+            replace_long_values(value, max_length)
 
 
 def get_email_notification_subscription_table():
@@ -85,6 +106,10 @@ def kafka_message_to_email(message):
             maintype="application",
             subtype="xml",
         )
+    elif topic.startswith("gcn.notices."):
+        valueJson = json.loads(message.value().decode())
+        replace_long_values(valueJson, 512)
+        email_message.set_content(json.dumps(valueJson, indent=4))
     else:
         email_message.add_attachment(
             message.value(),
