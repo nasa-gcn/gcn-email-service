@@ -36,17 +36,16 @@ REPLACEMENT_TEXT = (
 
 def replace_long_values(data, max_length):
     if isinstance(data, dict):
-        for key, value in data.items():
-            if isinstance(value, (str, bytes)) and len(value) > max_length:
-                data[key] = REPLACEMENT_TEXT
-            else:
-                replace_long_values(value, max_length)
+        iter = data.items()
     elif isinstance(data, list):
-        for index, item in enumerate(data):
-            if isinstance(item, (str, bytes)) and len(item) > max_length:
-                data[index] = REPLACEMENT_TEXT
-            else:
-                replace_long_values(item, max_length)
+        iter = enumerate(data)
+    else:
+        return
+    for key, value in iter:
+        if isinstance(value, str) and len(value) > max_length:
+            data[key] = REPLACEMENT_TEXT
+        else:
+            replace_long_values(value, max_length)
 
 
 def get_email_notification_subscription_table():
