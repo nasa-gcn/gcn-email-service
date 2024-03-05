@@ -106,7 +106,7 @@ def kafka_message_to_email(message):
             maintype="application",
             subtype="xml",
         )
-    elif topic.startswith("gcn.notices."):
+    elif topic.startswith("gcn.notices.") or topic.startswith("igwn."):
         valueJson = json.loads(message.value().decode())
         replace_long_values(valueJson, 512)
         email_message.set_content(json.dumps(valueJson, indent=4))
