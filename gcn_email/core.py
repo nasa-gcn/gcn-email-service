@@ -88,7 +88,9 @@ def subscribe_to_topics(consumer: Consumer):
     # This may need to be updated if new topics have a format different than
     # 'gcn.classic.[text | voevent | binary].[topic]'
     topics = [
-        topic for topic in consumer.list_topics().topics if topic.startswith("gcn.")
+        topic
+        for topic in consumer.list_topics().topics
+        if topic.startswith("gcn.") or topic.startswith("igwn")
     ]
     log.info("Subscribing to topics: %r", topics)
     consumer.subscribe(topics)
