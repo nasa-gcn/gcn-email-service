@@ -1,13 +1,15 @@
-FROM python:3.10 AS build
-ENV POETRY_VIRTUALENVS_CREATE false
-RUN curl -sSL https://install.python-poetry.org | python -
-COPY . /src
-WORKDIR /src
-RUN $HOME/.local/bin/poetry install --only main
+# Install dependencies separately from the package itself. Assuming that the
+# requirements change less frequently than the code, this will result in more
+# efficient caching of container layers.
 
-FROM python:3.10-slim
-COPY --from=build /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
-COPY --from=build /src/ /src/
-COPY --from=build /usr/local/bin/gcn-email /usr/local/bin/
+FROM python:3.12 AS requirements
+RUN pip install --no-cache-dir poetry poetry-plugin-export
+COPY pyproject.toml poetry.lock /
+RUN poetry export | pip install --no-cache-dir --ignore-installed --root /destdir -r /dev/stdin
+
+FROM python:3.12-slim
+COPY --from=requirements /destdir /
+COPY . /src
+RUN pip install --no-cache-dir --no-deps --editable /src
 ENTRYPOINT ["gcn-email"]
 USER nobody:nogroup
