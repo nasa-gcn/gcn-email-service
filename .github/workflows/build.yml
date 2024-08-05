@@ -38,23 +38,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: psf/black@stable
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.12'
 
-      - name: Install Poetry
-        run: pip install poetry
+      - name: Install dependencies
+        run: pip install pre-commit poetry
+
+      - name: Run pre-commit checks
+        run: pre-commit run --all-files
 
       - name: Install package
-        run: poetry install
+        run: poetry install --all-extras
 
-      - name: Run flake8 linter
-        run: poetry run flake8
-
-      # - name: Run unit tests
+        # - name: Run unit tests
       #   run: poetry run pytest . --cov --cov-report=xml
 
       # - name: Upload coverage to codecov

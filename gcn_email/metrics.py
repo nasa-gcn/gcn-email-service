@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 """Prometheus metrics."""
+
 import prometheus_client
 
 received = prometheus_client.Counter(

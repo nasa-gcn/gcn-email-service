@@ -5,19 +5,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-from email.message import EmailMessage
+import json
 import logging
 import os
-import json
+from email.message import EmailMessage
 
+import backoff
 import boto3
 from boto3.dynamodb.conditions import Key
 from gcn_kafka import Consumer, config_from_env
-from ratelimit import limits, RateLimitException
-import backoff
+from ratelimit import RateLimitException, limits
 
-from .helpers import periodic_task
 from . import metrics
+from .helpers import periodic_task
 
 SESV2 = boto3.client("sesv2")
 SENDER = f'GCN Notices <{os.environ["EMAIL_SENDER"]}>'
