@@ -11,7 +11,7 @@ import urllib
 import click
 import prometheus_client
 
-from .core import connect_as_consumer, subscribe_to_topics, recieve_alerts
+from .core import connect_as_consumer, recieve_alerts, subscribe_to_topics
 
 log = logging.getLogger(__name__)
 
