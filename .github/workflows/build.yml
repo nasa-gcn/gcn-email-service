@@ -43,11 +43,11 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependencies
-        run: pip install pre-commit poetry
-
       - name: Run pre-commit checks
-        run: pre-commit run --all-files
+        uses: pre-commit/action@v3.0.1
+
+      - name: Install poetry
+        run: pip install poetry
 
       - name: Install package
         run: poetry install --all-extras
