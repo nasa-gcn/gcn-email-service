@@ -9,7 +9,7 @@ import json
 import logging
 import os
 from email.message import EmailMessage
-
+from datetime import datetime, timezone
 import backoff
 import boto3
 from boto3.dynamodb.conditions import Key
@@ -19,8 +19,15 @@ from ratelimit import RateLimitException, limits
 from . import metrics
 from .helpers import periodic_task
 
+S3 = boto3.client("s3")
+RESOURCE = boto3.client("resourcegroupstaggingapi")
 SESV2 = boto3.client("sesv2")
 SENDER = f'GCN Notices <{os.environ["EMAIL_SENDER"]}>'
+
+BUCKET_NAME = bucket = RESOURCE.get_resources(
+    TagFilters=[{"Key": "aws:cloudformation:logical-id", "Values": ["NoticesBucket"]}],
+    ResourceTypeFilters=["s3"],
+)["ResourceTagMappingList"][0]["ResourceARN"].replace("arn:aws:s3:::", "")
 
 # Maximum send rate
 MAX_SENDS = boto3.client("ses").get_send_quota()["MaxSendRate"]
@@ -107,6 +114,8 @@ def kafka_message_to_email(message):
             subtype="xml",
         )
     elif topic.startswith("gcn.notices."):
+        key = f"{topic}-{datetime.now(timezone.utc)}"
+        S3.put_object(Bucket=BUCKET_NAME, Key=key, Body=message.value())
         valueJson = json.loads(message.value().decode())
         replace_long_values(valueJson, 512)
         email_message.set_content(json.dumps(valueJson, indent=4))
