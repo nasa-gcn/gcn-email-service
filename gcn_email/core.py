@@ -20,7 +20,7 @@ from . import metrics
 from .helpers import periodic_task
 
 SESV2 = boto3.client("sesv2")
-SENDER = f'GCN Notices <{os.environ["EMAIL_SENDER"]}>'
+SENDER = f"GCN Notices <{os.environ['EMAIL_SENDER']}>"
 
 # Maximum send rate
 MAX_SENDS = boto3.client("ses").get_send_quota()["MaxSendRate"]
